@@ -14,6 +14,7 @@ public class Pdi {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String hechoId;
     private String contenido;
     private String descripcion;
@@ -28,7 +29,7 @@ public class Pdi {
     public Pdi(String hechoId, String contenido, String descripcion, String lugar, LocalDateTime momento, List<String> etiquetas) {
         this.hechoId = hechoId;
         this.contenido = contenido;
-        this.etiquetas = new ArrayList<>();
+        this.etiquetas = etiquetas != null ? etiquetas : new ArrayList<>();
         this.lugar = lugar;
         this.momento = momento;
         this.descripcion = descripcion;
