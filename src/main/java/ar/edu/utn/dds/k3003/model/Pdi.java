@@ -16,23 +16,36 @@ public class Pdi {
 
     @Column(nullable = false)
     private String hechoId;
+
+    @Column(nullable = false)
     private String contenido;
+
     private String descripcion;
     private String lugar;
+
+    @Column(nullable = false)
     private LocalDateTime momento;
 
     @ElementCollection
     private List<String> etiquetas;
 
+    private LocalDateTime process_dt;
+
     public Pdi() {}
 
     public Pdi(String hechoId, String contenido, String descripcion, String lugar, LocalDateTime momento, List<String> etiquetas) {
+
+        if(hechoId == null || contenido == null || momento == null) {
+            throw new IllegalArgumentException("Hay campos críticos vacíos!");
+        }
+
         this.hechoId = hechoId;
         this.contenido = contenido;
-        this.etiquetas = etiquetas != null ? etiquetas : new ArrayList<>();
         this.lugar = lugar;
         this.momento = momento;
         this.descripcion = descripcion;
+        this.etiquetas = etiquetas != null ? etiquetas : new ArrayList<>();
+        this.process_dt = LocalDateTime.now();
     }
 
     public Long getId() { return id; }
@@ -64,6 +77,10 @@ public class Pdi {
     public LocalDateTime getMomento() { return momento; }
 
     public void setMomento(LocalDateTime momento) { this.momento = momento; }
+
+    public LocalDateTime getProcessDt() { return process_dt; }
+
+    public void setProcessDt(LocalDateTime process_dt) { this.process_dt = process_dt; }
 
     public void setId(Long id) { this.id = id; }
 }
