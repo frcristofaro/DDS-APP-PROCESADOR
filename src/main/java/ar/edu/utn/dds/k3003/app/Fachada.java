@@ -1,13 +1,12 @@
 package ar.edu.utn.dds.k3003.app;
 
-import ar.edu.utn.dds.k3003.facades.FachadaProcesadorPdI;
-import ar.edu.utn.dds.k3003.facades.FachadaSolicitudes;
-import ar.edu.utn.dds.k3003.facades.dtos.PdIDTO;
+import ar.edu.utn.dds.k3003.facades.FachadaProcesadorPdI;   //REVISAR
+import ar.edu.utn.dds.k3003.facades.FachadaSolicitudes;     //REVISAR
+import ar.edu.utn.dds.k3003.facades.dtos.PdIDTO;            //REVISAR
 import ar.edu.utn.dds.k3003.model.Coleccion;
 import ar.edu.utn.dds.k3003.model.Pdi;
-import ar.edu.utn.dds.k3003.repository.RepositorioPdIs;
-import ar.edu.utn.dds.k3003.service.ServicioPdi;
-import ar.edu.utn.dds.k3003.service.ServicioProcesador;
+import ar.edu.utn.dds.k3003.service.PdIService;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,54 +15,37 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 public class Fachada implements FachadaProcesadorPdI {
 
-    private final ServicioPdi repositorio;
-    private final ServicioProcesador procesador;
+    private final PdIService pdiService;
     private final List<Coleccion> colecciones = new ArrayList<>();
-    private final RepositorioPdIs repoPdi;
 
 
-    public Fachada(ServicioPdi repositorio, ServicioProcesador procesador, RepositorioPdIs repoPdi) {
-        this.repositorio = repositorio;
-        this.procesador = procesador;
-        this.repoPdi = repoPdi;
+    public Fachada(PdIService pdiService){
+        this.pdiService = pdiService;
     }
 
 
     @Override
-    public PdIDTO procesar(PdIDTO dto) throws IllegalStateException {
-        String hechoIdParaValidar = dto.hechoId();
+    public PdIDTO procesar(PdIDTO pdi) {
 
-        String hechoIdInterno = hechoIdParaValidar.equals("unHechoId") ? "unPDIid" : hechoIdParaValidar;
-        Pdi pdi = new Pdi(
-                dto.hechoId(),
-                dto.contenido(),
-                dto.descripcion(),
-                dto.lugar(),
-                dto.momento(),
-                dto.etiquetas()
-        );
+        Pdi procesado = pdiService.procesarPdI(pdi);
 
-        repositorio.guardar(pdi);
-
-        return toDTO(pdi);
+        return toDTO(procesado);
     }
-
 
 
     @Override
     public PdIDTO buscarPdIPorId(String pdiId) throws NoSuchElementException {
-        String id = pdiId;
-        Pdi pdi = repositorio.buscar(id)
+        Pdi pdi = pdiService.buscar(pdiId)
                 .orElseThrow(() -> new NoSuchElementException("PdI no encontrada"));
         return toDTO(pdi);
     }
 
     @Override
     public List<PdIDTO> buscarPorHecho(String hechoId){
-        List<Pdi> lista = repositorio.listarPorHecho(hechoId);
+        List<Pdi> lista = pdiService.listarPorHecho(hechoId);
         return lista.stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
@@ -72,17 +54,6 @@ public class Fachada implements FachadaProcesadorPdI {
     @Override
     public void setFachadaSolicitudes(FachadaSolicitudes fachadaSolicitudes) {
 
-    }
-
-    private Pdi toModel(PdIDTO dto) {
-        return new Pdi(
-                dto.hechoId(),
-                dto.contenido(),
-                dto.descripcion(),
-                dto.lugar(),
-                dto.momento(),
-                dto.etiquetas()
-        );
     }
 
     private PdIDTO toDTO(Pdi pdi) {
@@ -106,11 +77,11 @@ public class Fachada implements FachadaProcesadorPdI {
         return colecciones;
     }
 
-    public List<PdIDTO> listarTodosLosPdi() {
-        return this.repoPdi.findAll()
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-    }
+//    public List<PdIDTO> listarTodosLosPdi() {
+//        return this.repoPdi.findAll()
+//                .stream()
+//                .map(this::toDTO)
+//                .collect(Collectors.toList());
+//    }
 
 }

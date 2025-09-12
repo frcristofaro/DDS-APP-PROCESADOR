@@ -2,12 +2,10 @@ package ar.edu.utn.dds.k3003.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "Colecciones")
 public class Coleccion {
 
   @Id
