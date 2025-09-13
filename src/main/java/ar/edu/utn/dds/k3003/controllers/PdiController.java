@@ -62,25 +62,26 @@ public class PdiController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/procesar-remoto/{hechoId}")
-    public ResponseEntity<?> procesarHechoRemoto(@PathVariable String hechoId) {
-        try {
-            Optional<SolicitudDTO[]> solicitudesOpt = conexionHTTP.obtenerSolicitudesPorHecho(hechoId);
+    @GetMapping("/estado-solicitud/{hechoId}")
+    public ResponseEntity<Boolean> procesarHechoRemoto(@PathVariable String hechoId) {
+        Optional<SolicitudDTO[]> solicitudesOpt = conexionHTTP.obtenerSolicitudesID(hechoId);
 
-            if (solicitudesOpt.isEmpty() || solicitudesOpt.get().length == 0) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("No se encontraron solicitudes para el hecho con ID: " + hechoId);
-            }
-
-            return ResponseEntity.ok(solicitudesOpt.get());
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error consultando el hecho: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error inesperado al consultar las solicitudes: " + e.getMessage());
+        if (solicitudesOpt.isEmpty() || solicitudesOpt.get().length == 0) {
+            throw new NoSuchElementException("No hay solicitudes con Hecho ID: " + hechoId);
         }
+
+        SolicitudDTO[] solicitudes = solicitudesOpt.get();
+
+        for (SolicitudDTO solicitud : solicitudes) {
+            if (!"ACEPTADA".equalsIgnoreCase(solicitud.estado())) {
+
+                //Existen solicitudes inactivas
+                return ResponseEntity.ok(false);
+            }
+        }
+
+        //Todas las solicitudes están activas
+        return ResponseEntity.ok(true);
     }
 
 

@@ -38,11 +38,11 @@ public class Fachada implements FachadaProcesadorPdI {
     @Override
     public PdIDTO procesar(PdIDTO pdi) {
 
-//        if (estaActivoHecho(pdi.hechoId())) {
-//            throw new IllegalStateException(
-//                    "El hecho con ID " + pdi.hechoId() + " está inactivo o no tiene solicitudes activas"
-//            );
-//        }
+        if (estaActivoHecho(pdi.hechoId())) {
+            throw new IllegalStateException(
+                    "El hecho con ID " + pdi.hechoId() + " está inactivo o no tiene solicitudes activas"
+            );
+        }
 
         Pdi procesado = pdiService.procesarPdI(pdi);
 
@@ -98,12 +98,7 @@ public class Fachada implements FachadaProcesadorPdI {
         }
     }
 
-//    public PdIDTO procesarHechoRemoto(String hechoId) {
-//        Optional<HechoDTO> hechoOpt = conexionHTTP.obtenerHechoID(hechoId);
-//
-//        if (hechoOpt.isEmpty()) {
-//            throw new NoSuchElementException("El hecho remoto no existe: " + hechoId);
-//        }
+
 //
 //        HechoDTO hecho = hechoOpt.get();
 //
@@ -121,9 +116,9 @@ public class Fachada implements FachadaProcesadorPdI {
 //        return procesar(pdi); // llama al método procesar de esta fachada
 //    }
 
-//    public boolean estaActivoHecho(String hechoId) {
-//        return solicitudesService.validarEstado(hechoId);
-//    }
+    public boolean estaActivoHecho(String hechoId) {
+        return solicitudesService.validarEstado(hechoId);
+    }
 
 //    public boolean estaActivo(String hechoId) {
 //        Optional<SolicitudDTO[]> solicitudesOpt = conexionHTTP.obtenerSolicitudesID(hechoId);

@@ -24,16 +24,16 @@ public class ConexionHTTP {
         this.restTemplate = new RestTemplate();
     }
 
-    public Optional<SolicitudDTO[]> obtenerSolicitudesPorHecho(String hechoId) {
-        String fullUrl = this.url + "/api/solicitudes?hecho=" + hechoId;
+    public Optional<SolicitudDTO[]> obtenerSolicitudesID(String id) {
+        String fullUrl = this.url + "/api/solicitudes?hecho=" + id;
         try {
             ResponseEntity<SolicitudDTO[]> response = restTemplate.getForEntity(fullUrl, SolicitudDTO[].class);
             SolicitudDTO[] solicitudes = response.getBody();
-            return Optional.ofNullable(solicitudes); // devuelve null si no hay solicitudes
+            return Optional.ofNullable(solicitudes);
         } catch (HttpClientErrorException.NotFound e) {
             return Optional.empty();
         } catch (HttpClientErrorException e) {
-            throw new IllegalArgumentException("Error al consultar las solicitudes: " + e.getStatusCode(), e);
+            throw new IllegalArgumentException("Error al consultar el hecho: " + e.getStatusCode(), e);
         }
     }
 

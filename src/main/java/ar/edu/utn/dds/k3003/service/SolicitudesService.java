@@ -17,22 +17,22 @@ public class SolicitudesService {
     }
 
     //Verifico qe todas las solicitudes de un hecho estén ACEPTADAS
-//    public boolean validarEstado(String hechoId) {
-//        Optional<SolicitudDTO[]> solicitudesOpt = conexionHTTP.obtenerSolicitudesID(hechoId);
-//
-//        if (solicitudesOpt.isEmpty() || solicitudesOpt.get().length == 0) {
-//            throw new NoSuchElementException("No hay solicitudes con Hecho ID: " + hechoId);
-//        }
-//
-//        SolicitudDTO[] solicitudes = solicitudesOpt.get();
-//
-//        for (SolicitudDTO solicitud : solicitudes) {
-//            if (!"ACEPTADA".equalsIgnoreCase(solicitud.estado())) {
-//                return false;
-//            }
-//        }
-//
-//        return true;
-//    }
+    public boolean validarEstado(String hechoId) {
+        Optional<SolicitudDTO[]> solicitudesOpt = conexionHTTP.obtenerSolicitudesID(hechoId);
+
+        if (solicitudesOpt.isEmpty() || solicitudesOpt.get().length == 0) {
+            throw new NoSuchElementException("No hay solicitudes con Hecho ID: " + hechoId);
+        }
+
+        SolicitudDTO[] solicitudes = solicitudesOpt.get();
+
+        for (SolicitudDTO solicitud : solicitudes) {
+            if (!"ACEPTADA".equalsIgnoreCase(solicitud.estado())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 }
