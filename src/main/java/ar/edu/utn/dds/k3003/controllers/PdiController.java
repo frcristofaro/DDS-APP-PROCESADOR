@@ -1,5 +1,6 @@
 package ar.edu.utn.dds.k3003.controllers;
 
+import ar.edu.utn.dds.k3003.app.Fachada;
 import ar.edu.utn.dds.k3003.facades.dtos.PdIDTO;
 import ar.edu.utn.dds.k3003.facades.FachadaProcesadorPdI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,10 @@ import java.util.NoSuchElementException;
 @RequestMapping("/pdis")
 public class PdiController {
 
-    private final FachadaProcesadorPdI fachada;
+    private final Fachada fachada;
 
     @Autowired
-    public PdiController(FachadaProcesadorPdI fachada) {
+    public PdiController(Fachada fachada) {
         this.fachada = fachada;
     }
 
@@ -49,5 +50,11 @@ public class PdiController {
         }
         List<PdIDTO> lista = fachada.buscarPorHecho(hechoId);
         return new ResponseEntity<>(lista, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarHecho(@PathVariable String id) {
+        fachada.eliminarPdIPorId(id);
+        return ResponseEntity.noContent().build();
     }
 }

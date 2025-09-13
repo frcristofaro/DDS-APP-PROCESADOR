@@ -77,6 +77,14 @@ public class Fachada implements FachadaProcesadorPdI {
         return colecciones;
     }
 
+    public void eliminarPdIPorId(String pdiId) throws NoSuchElementException {
+        boolean eliminado = pdiService.eliminarPorId(pdiId);
+        if (!eliminado) {
+            throw new NoSuchElementException("No existe un PdI con id " + pdiId);
+        }
+    }
+
+
 //    public List<PdIDTO> listarTodosLosPdi() {
 //        return this.repoPdi.findAll()
 //                .stream()

@@ -2,7 +2,7 @@ package ar.edu.utn.dds.k3003.service;
 
 import ar.edu.utn.dds.k3003.facades.dtos.CategoriaHechoEnum;
 import ar.edu.utn.dds.k3003.facades.dtos.PdIDTO; //REVISAR
-import ar.edu.utn.dds.k3003.app.FachadaSolicitudesRemote;
+//import ar.edu.utn.dds.k3003.app.FachadaSolicitudesRemote;
 //import ar.edu.utn.dds.k3003.facades.FachadaSolicitudes;
 import ar.edu.utn.dds.k3003.model.Pdi;
 import ar.edu.utn.dds.k3003.repository.PdIRepository;
@@ -118,6 +118,15 @@ public class PdIService {
 
         return new ArrayList<>(etiquetas);
 
+    }
+
+    public boolean eliminarPorId(String pdiId) {
+        Long id = Long.parseLong(pdiId);
+        if (repo.existsById(id)) {
+            repo.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
 

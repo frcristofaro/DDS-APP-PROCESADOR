@@ -12,11 +12,12 @@ import java.util.NoSuchElementException;
 
 public class FachadaSolicitudesRemote implements FachadaSolicitudes {
 
-    private final RestTemplate restTemplate;
-    private final String baseUrl = "http://localhost:8081";
+    private RestTemplate restTemplate;
+    private String endpoint;
 
-    public FachadaSolicitudesRemote(RestTemplate restTemplate) {
+    public FachadaSolicitudesRemote(RestTemplate restTemplate, String endpoint) {
         this.restTemplate = restTemplate;
+        this.endpoint = endpoint;
     }
 
 
@@ -42,7 +43,7 @@ public class FachadaSolicitudesRemote implements FachadaSolicitudes {
 
     @Override
     public boolean estaActivo(String unHechoId) {
-        return restTemplate.getForObject(baseUrl + "/solicitudes/activo/" + unHechoId, Boolean.class);
+        return restTemplate.getForObject(endpoint + "/solicitudes/activo/" + unHechoId, Boolean.class);
     }
 
     @Override
