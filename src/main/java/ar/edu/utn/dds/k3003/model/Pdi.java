@@ -23,7 +23,6 @@ public class Pdi {
     private String descripcion;
     private String lugar;
 
-    @Column(nullable = false)
     private LocalDateTime momento;
 
     @ElementCollection
