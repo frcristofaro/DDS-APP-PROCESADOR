@@ -1,11 +1,10 @@
 package ar.edu.utn.dds.k3003.service;
 
 import ar.edu.utn.dds.k3003.facades.dtos.CategoriaHechoEnum;
-import ar.edu.utn.dds.k3003.facades.dtos.PdIDTO; //REVISAR
-//import ar.edu.utn.dds.k3003.app.FachadaSolicitudesRemote;
-//import ar.edu.utn.dds.k3003.facades.FachadaSolicitudes;
+import ar.edu.utn.dds.k3003.facades.dtos.PdIDTO;
 import ar.edu.utn.dds.k3003.model.Pdi;
 import ar.edu.utn.dds.k3003.repository.PdIRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,12 +14,10 @@ import java.util.*;
 public class PdIService {
 
     private final PdIRepository repo;
-    //private final FachadaSolicitudesRemote fachadaSolicitudes;
 
-
-    public PdIService(PdIRepository repo) { //, FachadaSolicitudesRemote fachadaSolicitudes) {
+    @Autowired
+    public PdIService(PdIRepository repo) {
         this.repo = repo;
-        //this.fachadaSolicitudes = fachadaSolicitudes;
     }
 
     public List<Pdi> listarPorHecho(String hechoId) {
@@ -36,11 +33,6 @@ public class PdIService {
     }
 
     public Pdi procesarPdI(PdIDTO pdi) {
-
-        // Valido hecho con Solicitudes
-//        if(!fachadaSolicitudes.estaActivo(pdi.hechoId())) {
-//            throw new IllegalStateException("El hecho fue censurado o está inactivo");
-//        }
 
         // Si ya existe, traigo el que tengo en bd
         Optional<Pdi> existente = pdi.id() != null
@@ -128,11 +120,5 @@ public class PdIService {
         }
         return false;
     }
-
-
-//    TODO
-//    public List<Pdi> listarTodos() {
-//        return repo.findAll();
-//    }
 
 }

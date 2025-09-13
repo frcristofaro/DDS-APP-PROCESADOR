@@ -1,8 +1,9 @@
 package ar.edu.utn.dds.k3003.controllers;
 
+import ar.edu.utn.dds.k3003.app.ConexionHTTP;
 import ar.edu.utn.dds.k3003.app.Fachada;
+import ar.edu.utn.dds.k3003.app.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.PdIDTO;
-import ar.edu.utn.dds.k3003.facades.FachadaProcesadorPdI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,16 +11,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/pdis")
 public class PdiController {
 
     private final Fachada fachada;
+    private final ConexionHTTP conexionHTTP;
 
     @Autowired
-    public PdiController(Fachada fachada) {
+    public PdiController(Fachada fachada, ConexionHTTP conexionHTTP) {
         this.fachada = fachada;
+        this.conexionHTTP = conexionHTTP;
     }
 
     @PostMapping
@@ -57,4 +61,29 @@ public class PdiController {
         fachada.eliminarPdIPorId(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/procesar-remoto/{hechoId}")
+    public ResponseEntity<?> procesarHechoRemoto(@PathVariable String hechoId) {
+        try {
+            Optional<SolicitudDTO[]> solicitudesOpt = conexionHTTP.obtenerSolicitudesPorHecho(hechoId);
+
+            if (solicitudesOpt.isEmpty() || solicitudesOpt.get().length == 0) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No se encontraron solicitudes para el hecho con ID: " + hechoId);
+            }
+
+            return ResponseEntity.ok(solicitudesOpt.get());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error consultando el hecho: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error inesperado al consultar las solicitudes: " + e.getMessage());
+        }
+    }
+
+
+
+
 }
