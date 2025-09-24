@@ -2,7 +2,6 @@ package ar.edu.utn.dds.k3003.app;
 
 import ar.edu.utn.dds.k3003.facades.FachadaSolicitudes;     //REVISAR
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;            //REVISAR
-import ar.edu.utn.dds.k3003.model.Coleccion;
 import ar.edu.utn.dds.k3003.model.Pdi;
 import ar.edu.utn.dds.k3003.service.PdIService;
 import ar.edu.utn.dds.k3003.service.SolicitudesService;
@@ -20,8 +19,6 @@ public class Fachada {//implements FachadaProcesadorPdI {
 
     @Autowired
     private final ConexionHTTP conexionHTTP;
-
-    private final List<Coleccion> colecciones = new ArrayList<>();
 
 
     public Fachada(PdIService pdiService, SolicitudesService solicitudesService, ConexionHTTP conexionHTTP){
@@ -61,10 +58,7 @@ public class Fachada {//implements FachadaProcesadorPdI {
                 .collect(Collectors.toList());
     }
 
-
-    public void setFachadaSolicitudes(FachadaSolicitudes fachadaSolicitudes) {
-
-    }
+    public void setFachadaSolicitudes(FachadaSolicitudes fachadaSolicitudes) {}
 
     private PdIDTO toDTO(Pdi pdi) {
         return new PdIDTO(
@@ -76,15 +70,6 @@ public class Fachada {//implements FachadaProcesadorPdI {
                 pdi.getContenido(),
                 pdi.getEtiquetas() != null ? pdi.getEtiquetas() : Collections.emptyList()
         );
-    }
-
-    public Coleccion crearColeccion(Coleccion coleccion) {
-        colecciones.add(coleccion);
-        return coleccion;
-    }
-
-    public List<Coleccion> obtenerColecciones() {
-        return colecciones;
     }
 
     public void eliminarPdIPorId(String pdiId) throws NoSuchElementException {
