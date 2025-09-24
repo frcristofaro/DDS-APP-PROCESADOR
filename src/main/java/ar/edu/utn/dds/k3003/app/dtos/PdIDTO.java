@@ -9,7 +9,7 @@ public record PdIDTO(
         String hechoId,
         String descripcion,
         String lugar,
-        LocalDateTime momento,
+        String momento,
         String contenido,
         List<String> etiquetas
         ) {

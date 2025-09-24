@@ -1,7 +1,6 @@
 package ar.edu.utn.dds.k3003.app;
 
 import ar.edu.utn.dds.k3003.app.dtos.SolicitudDTO;
-import ar.edu.utn.dds.k3003.facades.dtos.HechoDTO;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.ResponseEntity;

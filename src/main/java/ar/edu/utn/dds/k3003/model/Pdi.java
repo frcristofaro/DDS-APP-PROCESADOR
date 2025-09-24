@@ -23,7 +23,7 @@ public class Pdi {
     private String descripcion;
     private String lugar;
 
-    private LocalDateTime momento;
+    private String momento;
 
     @ElementCollection
     private List<String> etiquetas;
@@ -32,7 +32,7 @@ public class Pdi {
 
     public Pdi() {}
 
-    public Pdi(String hechoId, String contenido, String descripcion, String lugar, LocalDateTime momento, List<String> etiquetas) {
+    public Pdi(String hechoId, String contenido, String descripcion, String lugar, String momento, List<String> etiquetas) {
 
         if(hechoId == null || contenido == null || momento == null) {
             throw new IllegalArgumentException("Hay campos críticos vacíos!");
@@ -73,9 +73,9 @@ public class Pdi {
 
     public void setLugar(String lugar) { this.lugar = lugar; }
 
-    public LocalDateTime getMomento() { return momento; }
+    public String getMomento() { return momento; }
 
-    public void setMomento(LocalDateTime momento) { this.momento = momento; }
+    public void setMomento(String momento) { this.momento = momento; }
 
     public LocalDateTime getProcessDt() { return process_dt; }
 

@@ -1,7 +1,7 @@
 package ar.edu.utn.dds.k3003.service;
 
 import ar.edu.utn.dds.k3003.facades.dtos.CategoriaHechoEnum;
-import ar.edu.utn.dds.k3003.facades.dtos.PdIDTO;
+import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
 import ar.edu.utn.dds.k3003.model.Pdi;
 import ar.edu.utn.dds.k3003.repository.PdIRepository;
 import org.springframework.beans.factory.annotation.Autowired;

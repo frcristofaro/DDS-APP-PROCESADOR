@@ -27,7 +27,7 @@ public class SolicitudesService {
         SolicitudDTO[] solicitudes = solicitudesOpt.get();
 
         for (SolicitudDTO solicitud : solicitudes) {
-            if (!"ACEPTADA".equalsIgnoreCase(solicitud.estado())) {
+            if ("ACEPTADA".equalsIgnoreCase(solicitud.estado())) {
                 return false;
             }
         }
