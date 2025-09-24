@@ -14,10 +14,14 @@ import java.util.*;
 public class PdIService {
 
     private final PdIRepository repo;
+    private final OCRService ocrService;
+    private final EtiquetadorService etiquetadorService;
 
     @Autowired
-    public PdIService(PdIRepository repo) {
+    public PdIService(PdIRepository repo, OCRService ocrService, EtiquetadorService etiquetadorService) {
         this.repo = repo;
+        this.ocrService = ocrService;
+        this.etiquetadorService = etiquetadorService;
     }
 
     public List<Pdi> listarPorHecho(String hechoId) {
@@ -34,30 +38,65 @@ public class PdIService {
 
     public Pdi procesarPdI(PdIDTO pdi) {
 
-        // Si ya existe, traigo el que tengo en bd
+        System.out.println("=== Iniciando procesarPdI ===");
+        System.out.println("DTO recibido: " + pdi);
+
+        // Si ya existe, traigo el que tengo en la base
         Optional<Pdi> existente = pdi.id() != null
                 ? repo.findById(Long.parseLong(pdi.id()))
                 : Optional.empty();
 
-        // Si existe, actualizo fecha process_dt
         if (existente.isPresent()) {
             Pdi pdiExistente = existente.get();
             pdiExistente.setProcessDt(LocalDateTime.now());
-            return existente.get();
+            System.out.println("Actualizando PdI existente: " + pdiExistente);
+            return repo.save(pdiExistente);
         }
 
-        // Genero etiquetas
-        List<String> etiquetas = generarEtiquetas(pdi);
+        String ocrResultado = null;
+        List<String> etiquetas = new ArrayList<>();
 
-        // Lo guardo en bd
+        if (pdi.urlImagen() != null && !pdi.urlImagen().isBlank()) {
+            try {
+                System.out.println("Procesando OCR para URL: " + pdi.urlImagen());
+                ocrResultado = ocrService.procesarImagen(pdi.urlImagen());
+                System.out.println("Resultado OCR: " + ocrResultado);
+            } catch (Exception e) {
+                System.err.println("Error al procesar OCR: " + e.getMessage());
+            }
+
+            try {
+                System.out.println("Etiquetando imagen...");
+
+                List<Map<String, Object>> etiquetasRaw = etiquetadorService.etiquetarImagen(pdi.urlImagen());
+
+                for (Map<String, Object> etiquetaMap : etiquetasRaw) {
+                    Object label = etiquetaMap.get("label");
+                    if (label != null) {
+                        etiquetas.add(label.toString());
+                    }
+                }
+                System.out.println("Etiquetas obtenidas: " + etiquetas);
+            } catch (Exception e) {
+                System.err.println("Error al etiquetar imagen: " + e.getMessage());
+            }
+        }
+
+        //List<String> etiquetasProcesadas = etiquetas;
+
+        // Crear nueva PdI
         Pdi nuevaPdI = new Pdi(
                 pdi.hechoId(),
-                pdi.contenido(),
                 pdi.descripcion(),
                 pdi.lugar(),
                 pdi.momento(),
+                pdi.contenido(),
+                pdi.urlImagen(),
+                ocrResultado,
                 etiquetas
         );
+
+        System.out.println("Nueva PdI antes de persistir: " + nuevaPdI);
 
         return repo.save(nuevaPdI);
 

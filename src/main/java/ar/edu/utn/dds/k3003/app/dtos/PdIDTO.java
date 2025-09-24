@@ -10,10 +10,12 @@ public record PdIDTO(
         String lugar,
         String momento,
         String contenido,
+        String urlImagen,
+        String ocrResultado,
         List<String> etiquetas
         ) {
 
     public PdIDTO(String id,String hechoId) {
-        this(id,hechoId, null, null, null, null, Collections.emptyList());
+        this(id,hechoId, null, null, null, null, null, null, Collections.emptyList());
     }
 }

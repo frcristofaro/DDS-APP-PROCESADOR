@@ -1,7 +1,7 @@
 package ar.edu.utn.dds.k3003.app;
 
-import ar.edu.utn.dds.k3003.facades.FachadaSolicitudes;     //REVISAR
-import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;            //REVISAR
+import ar.edu.utn.dds.k3003.facades.FachadaSolicitudes;
+import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
 import ar.edu.utn.dds.k3003.model.Pdi;
 import ar.edu.utn.dds.k3003.service.PdIService;
 import ar.edu.utn.dds.k3003.service.SolicitudesService;
@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class Fachada {//implements FachadaProcesadorPdI {
+public class FachadaProcesadorPdI {
 
     private final PdIService pdiService;
     private final SolicitudesService solicitudesService;
@@ -21,7 +21,7 @@ public class Fachada {//implements FachadaProcesadorPdI {
     private final ConexionHTTP conexionHTTP;
 
 
-    public Fachada(PdIService pdiService, SolicitudesService solicitudesService, ConexionHTTP conexionHTTP){
+    public FachadaProcesadorPdI(PdIService pdiService, SolicitudesService solicitudesService, ConexionHTTP conexionHTTP){
         this.pdiService = pdiService;
         this.solicitudesService = solicitudesService;
         this.conexionHTTP = conexionHTTP;
@@ -68,6 +68,8 @@ public class Fachada {//implements FachadaProcesadorPdI {
                 pdi.getLugar(),
                 pdi.getMomento(),
                 pdi.getContenido(),
+                pdi.getUrlImagen(),
+                pdi.getOcrResultado(),
                 pdi.getEtiquetas() != null ? pdi.getEtiquetas() : Collections.emptyList()
         );
     }

@@ -1,7 +1,7 @@
 package ar.edu.utn.dds.k3003.controllers;
 
 import ar.edu.utn.dds.k3003.app.ConexionHTTP;
-import ar.edu.utn.dds.k3003.app.Fachada;
+import ar.edu.utn.dds.k3003.app.FachadaProcesadorPdI;
 import ar.edu.utn.dds.k3003.app.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +17,11 @@ import java.util.Optional;
 @RequestMapping("/pdis")
 public class PdiController {
 
-    private final Fachada fachada;
+    private final FachadaProcesadorPdI fachada;
     private final ConexionHTTP conexionHTTP;
 
     @Autowired
-    public PdiController(Fachada fachada, ConexionHTTP conexionHTTP) {
+    public PdiController(FachadaProcesadorPdI fachada, ConexionHTTP conexionHTTP) {
         this.fachada = fachada;
         this.conexionHTTP = conexionHTTP;
     }
@@ -73,7 +73,7 @@ public class PdiController {
         SolicitudDTO[] solicitudes = solicitudesOpt.get();
 
         for (SolicitudDTO solicitud : solicitudes) {
-            if (!"ACEPTADA".equalsIgnoreCase(solicitud.estado())) {
+            if ("ACEPTADA".equalsIgnoreCase(solicitud.estado())) {
 
                 //Existen solicitudes inactivas
                 return ResponseEntity.ok(false);

@@ -22,27 +22,32 @@ public class Pdi {
 
     private String descripcion;
     private String lugar;
-
     private String momento;
 
+    private String urlImagen;
+    private String ocrResultado;
+
     @ElementCollection
-    private List<String> etiquetas;
+    @CollectionTable(name = "pdi_etiquetas", joinColumns = @JoinColumn(name = "pdi_id"))
+    private List<String> etiquetas = new ArrayList<>();
 
     private LocalDateTime process_dt;
 
     public Pdi() {}
 
-    public Pdi(String hechoId, String contenido, String descripcion, String lugar, String momento, List<String> etiquetas) {
+    public Pdi(String hechoId, String contenido, String descripcion, String lugar, String momento, String urlImagen, String ocrResultado, List<String> etiquetas) {
 
         if(hechoId == null || contenido == null || momento == null) {
             throw new IllegalArgumentException("Hay campos críticos vacíos!");
         }
 
         this.hechoId = hechoId;
-        this.contenido = contenido;
+        this.descripcion = descripcion;
         this.lugar = lugar;
         this.momento = momento;
-        this.descripcion = descripcion;
+        this.contenido = contenido;
+        this.urlImagen = urlImagen;
+        this.ocrResultado = ocrResultado;
         this.etiquetas = etiquetas != null ? etiquetas : new ArrayList<>();
         this.process_dt = LocalDateTime.now();
     }
@@ -82,4 +87,13 @@ public class Pdi {
     public void setProcessDt(LocalDateTime process_dt) { this.process_dt = process_dt; }
 
     public void setId(Long id) { this.id = id; }
+
+    public String getOcrResultado() { return ocrResultado; }
+
+    public void setOcrResultado(String ocrResultado) { this.ocrResultado = ocrResultado; }
+
+    public String getUrlImagen() { return urlImagen; }
+
+    public void setUrlImagen(String urlImagen) { this.urlImagen = urlImagen; }
+
 }
