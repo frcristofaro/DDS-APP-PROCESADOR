@@ -1,6 +1,5 @@
 package ar.edu.utn.dds.k3003.service;
 
-import ar.edu.utn.dds.k3003.facades.dtos.CategoriaHechoEnum;
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
 import ar.edu.utn.dds.k3003.model.Pdi;
 import ar.edu.utn.dds.k3003.repository.PdIRepository;
@@ -14,8 +13,8 @@ import java.util.*;
 public class PdIService {
 
     private final PdIRepository repo;
-    private final OCRService ocrService;
-    private final EtiquetadorService etiquetadorService;
+    private final OCRProcesador ocrService;
+    private final EtiquetadorImagenes etiquetadorService;
 
     @Autowired
     public PdIService(PdIRepository repo, OCRService ocrService, EtiquetadorService etiquetadorService) {
@@ -38,7 +37,7 @@ public class PdIService {
 
     public Pdi procesarPdI(PdIDTO pdi) {
 
-        System.out.println("=== Iniciando procesarPdI ===");
+        System.out.println("Iniciando procesarPdI");
         System.out.println("DTO recibido: " + pdi);
 
         // Si ya existe, traigo el que tengo en la base
@@ -82,8 +81,6 @@ public class PdIService {
             }
         }
 
-        //List<String> etiquetasProcesadas = etiquetas;
-
         // Crear nueva PdI
         Pdi nuevaPdI = new Pdi(
                 pdi.hechoId(),
@@ -102,6 +99,8 @@ public class PdIService {
 
     }
 
+
+    /*
     private static final Map<CategoriaHechoEnum, List<String>> VOCABULARIO = Map.of(
             CategoriaHechoEnum.ENTRETENIMIENTO, List.of("cine", "música", "teatro", "concierto", "festival"),
             CategoriaHechoEnum.EDUCACIONAL, List.of("escuela", "universidad", "examen", "curso", "clase"),
@@ -150,6 +149,7 @@ public class PdIService {
         return new ArrayList<>(etiquetas);
 
     }
+    */
 
     public boolean eliminarPorId(String pdiId) {
         Long id = Long.parseLong(pdiId);

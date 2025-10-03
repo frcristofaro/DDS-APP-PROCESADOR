@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class OCRService {
+public class OCRService implements OCRProcesador {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final String apiKey = "K86883722888957";
