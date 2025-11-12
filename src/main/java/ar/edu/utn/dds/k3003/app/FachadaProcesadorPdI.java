@@ -1,10 +1,9 @@
 package ar.edu.utn.dds.k3003.app;
 
-import ar.edu.utn.dds.k3003.facades.FachadaSolicitudes;
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
+import ar.edu.utn.dds.k3003.app.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.model.Pdi;
 import ar.edu.utn.dds.k3003.service.PdIService;
-import ar.edu.utn.dds.k3003.service.SolicitudesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,15 +14,14 @@ import java.util.stream.Collectors;
 public class FachadaProcesadorPdI {
 
     private final PdIService pdiService;
-    private final SolicitudesService solicitudesService;
 
     @Autowired
     private final ConexionHTTP conexionHTTP;
 
 
-    public FachadaProcesadorPdI(PdIService pdiService, SolicitudesService solicitudesService, ConexionHTTP conexionHTTP){
+    public FachadaProcesadorPdI(PdIService pdiService, ConexionHTTP conexionHTTP){ //SolicitudesService solicitudesService, ConexionHTTP conexionHTTP){
         this.pdiService = pdiService;
-        this.solicitudesService = solicitudesService;
+        //this.solicitudesService = solicitudesService;
         this.conexionHTTP = conexionHTTP;
     }
 
@@ -38,7 +36,7 @@ public class FachadaProcesadorPdI {
         }
 
         Pdi procesado = pdiService.procesarPdI(pdi);
-
+        System.out.println(procesado.getId().toString());
         return toDTO(procesado);
     }
 
@@ -58,7 +56,6 @@ public class FachadaProcesadorPdI {
                 .collect(Collectors.toList());
     }
 
-    public void setFachadaSolicitudes(FachadaSolicitudes fachadaSolicitudes) {}
 
     private PdIDTO toDTO(Pdi pdi) {
         return new PdIDTO(
@@ -81,8 +78,23 @@ public class FachadaProcesadorPdI {
         }
     }
 
+
     public boolean estaActivoHecho(String hechoId) {
-        return solicitudesService.validarEstado(hechoId);
+        Optional<SolicitudDTO[]> solicitudesOpt = conexionHTTP.obtenerSolicitudesID(hechoId);
+
+        if (solicitudesOpt.isEmpty() || solicitudesOpt.get().length == 0) {
+            throw new NoSuchElementException("No hay solicitudes con Hecho ID: " + hechoId);
+        }
+
+        SolicitudDTO[] solicitudes = solicitudesOpt.get();
+
+        for (SolicitudDTO solicitud : solicitudes) {
+            if ("ACEPTADA".equalsIgnoreCase(solicitud.estado())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 

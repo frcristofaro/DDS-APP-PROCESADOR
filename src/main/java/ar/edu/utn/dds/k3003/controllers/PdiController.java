@@ -4,6 +4,10 @@ import ar.edu.utn.dds.k3003.app.ConexionHTTP;
 import ar.edu.utn.dds.k3003.app.FachadaProcesadorPdI;
 import ar.edu.utn.dds.k3003.app.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
+import ar.edu.utn.dds.k3003.nosql.PdiBusquedaDocument;
+import ar.edu.utn.dds.k3003.nosql.PdiBusquedaRepository;
+import ar.edu.utn.dds.k3003.service.BusquedaService;
+import ar.edu.utn.dds.k3003.service.OCRService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +23,16 @@ public class PdiController {
 
     private final FachadaProcesadorPdI fachada;
     private final ConexionHTTP conexionHTTP;
+    private final OCRService ocrService;
 
     @Autowired
-    public PdiController(FachadaProcesadorPdI fachada, ConexionHTTP conexionHTTP) {
+    private BusquedaService busquedaService;
+
+    @Autowired
+    public PdiController(FachadaProcesadorPdI fachada, ConexionHTTP conexionHTTP, OCRService ocrService) {
         this.fachada = fachada;
         this.conexionHTTP = conexionHTTP;
+        this.ocrService = ocrService;
     }
 
     @PostMapping
@@ -85,6 +94,24 @@ public class PdiController {
     }
 
 
+    @GetMapping("/test-ocr")
+    public ResponseEntity<String> testOcr() {
+        //String urlTest = "https://cdn.pixabay.com/photo/2015/03/24/23/58/nobody-is-perfect-688370_1280.jpg";
+        String urlTest = "https://cdn.pixabay.com/photo/2016/01/12/22/37/accomplish-1136863_1280.jpg";
+        String resultado = ocrService.procesarImagen(urlTest);
+        System.out.println("Resultado OCR: " + resultado);
+        return ResponseEntity.ok(resultado);
+    }
 
+    @GetMapping("/buscar")
+    public ResponseEntity<List<PdiBusquedaDocument>> buscarPdis(
+            @RequestParam String texto,
+            @RequestParam(required = false) String tag,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        List<PdiBusquedaDocument> resultados = busquedaService.buscar(texto, tag, page, size);
+        return ResponseEntity.ok(resultados);
+    }
 
 }

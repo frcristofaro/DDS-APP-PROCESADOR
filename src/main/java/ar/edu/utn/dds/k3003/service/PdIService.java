@@ -17,6 +17,9 @@ public class PdIService {
     private final EtiquetadorImagenes etiquetadorService;
 
     @Autowired
+    private BusquedaService busquedaService;
+
+    @Autowired
     public PdIService(PdIRepository repo, OCRService ocrService, EtiquetadorService etiquetadorService) {
         this.repo = repo;
         this.ocrService = ocrService;
@@ -95,7 +98,11 @@ public class PdIService {
 
         System.out.println("Nueva PdI antes de persistir: " + nuevaPdI);
 
-        return repo.save(nuevaPdI);
+        Pdi guardado = repo.save(nuevaPdI);
+
+        busquedaService.indexar(guardado);
+
+        return guardado;
 
     }
 

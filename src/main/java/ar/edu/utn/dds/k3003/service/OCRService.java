@@ -17,14 +17,38 @@ public class OCRService implements OCRProcesador {
     public String procesarImagen(String urlImagen) {
         try {
             String endpoint = "https://api.ocr.space/parse/imageurl";
+
+            // Detectar extensión
+            String lowerUrl = urlImagen.toLowerCase();
+            String fileType = null;
+            if (lowerUrl.endsWith(".png")) {
+                fileType = "PNG";
+            } else if (lowerUrl.endsWith(".jpg") || lowerUrl.endsWith(".jpeg")) {
+                fileType = "JPG";
+            }
+
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(endpoint)
                     .queryParam("apikey", apiKey)
                     .queryParam("url", urlImagen);
 
+            // Si no es PNG o JPG, pasar filetype manual
+            if (fileType == null) {
+                builder.queryParam("filetype", "PNG"); // asumimos PNG por defecto
+            }
+
             ResponseEntity<Map> response = restTemplate.getForEntity(builder.toUriString(), Map.class);
 
+            System.out.println("OCR API RESPONSE");
+            System.out.println(response);
+
+            if (response.getBody() != null) {
+                System.out.println("OCR API BODY");
+                System.out.println(response.getBody());
+            } else {
+                System.out.println("El body es NULL");
+            }
+
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                // La respuesta de OCR.Space suele tener la estructura "ParsedResults"[0]["ParsedText"]
                 List parsedResults = (List) response.getBody().get("ParsedResults");
                 if (parsedResults != null && !parsedResults.isEmpty()) {
                     Map firstResult = (Map) parsedResults.get(0);

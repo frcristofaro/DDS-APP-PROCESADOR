@@ -1,0 +1,28 @@
+package ar.edu.utn.dds.k3003.nosql;
+
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+
+import java.util.List;
+
+public interface PdiBusquedaRepository  extends MongoRepository<PdiBusquedaDocument, String> {
+
+        // Búsqueda por texto y etiqueta
+        @Query("{ $and: [ " +
+                "{ $or: [ " +
+                "  { 'descripcion': { $regex: ?0, $options: 'i' } }, " +
+                "  { 'contenido': { $regex: ?0, $options: 'i' } }, " +
+                "  { 'ocrResultado': { $regex: ?0, $options: 'i' } } " +
+                "] }, " +
+                "{ 'etiquetas': { $regex: ?1, $options: 'i' } } " +
+                "] }")
+        List<PdiBusquedaDocument> buscarPorTextoYTag(String texto, String tag);
+
+        // Si no hay tag, buscamos solo por texto
+        @Query("{ $or: [ " +
+                "{ 'descripcion': { $regex: ?0, $options: 'i' } }, " +
+                "{ 'contenido': { $regex: ?0, $options: 'i' } }, " +
+                "{ 'ocrResultado': { $regex: ?0, $options: 'i' } } " +
+                "] }")
+        List<PdiBusquedaDocument> buscarPorTexto(String texto);
+    }
