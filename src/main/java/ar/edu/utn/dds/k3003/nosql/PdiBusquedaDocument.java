@@ -1,5 +1,8 @@
 package ar.edu.utn.dds.k3003.nosql;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -7,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(collection = "pdis")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PdiBusquedaDocument {
 
         @Id
@@ -22,7 +28,7 @@ public class PdiBusquedaDocument {
         private List<String> etiquetas;
         private LocalDateTime fechaIndexado;
 
-        public PdiBusquedaDocument() {}
+        //public PdiBusquedaDocument() {}
 
         public PdiBusquedaDocument(String id, String hechoId, String descripcion, String lugar, String momento,
                                    String contenido, String urlImagen, String ocrResultado, List<String> etiquetas) {

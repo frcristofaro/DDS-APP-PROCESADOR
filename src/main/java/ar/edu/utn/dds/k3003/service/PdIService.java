@@ -40,8 +40,8 @@ public class PdIService {
 
     public Pdi procesarPdI(PdIDTO pdi) {
 
-        System.out.println("Iniciando procesarPdI");
-        System.out.println("DTO recibido: " + pdi);
+        //System.out.println("Iniciando procesarPdI");
+        //System.out.println("DTO recibido: " + pdi);
 
         // Si ya existe, traigo el que tengo en la base
         Optional<Pdi> existente = pdi.id() != null

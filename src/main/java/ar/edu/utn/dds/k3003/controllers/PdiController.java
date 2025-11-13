@@ -5,7 +5,6 @@ import ar.edu.utn.dds.k3003.app.FachadaProcesadorPdI;
 import ar.edu.utn.dds.k3003.app.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
 import ar.edu.utn.dds.k3003.nosql.PdiBusquedaDocument;
-import ar.edu.utn.dds.k3003.nosql.PdiBusquedaRepository;
 import ar.edu.utn.dds.k3003.service.BusquedaService;
 import ar.edu.utn.dds.k3003.service.OCRService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,9 @@ public class PdiController {
     @PostMapping
     public ResponseEntity<PdIDTO> crearPdi(@RequestBody PdIDTO dto) {
         try {
+            //System.out.println("CONTROLLER: Creando PDI");
             PdIDTO creado = fachada.procesar(dto);
+            //System.out.println("CONTROLLER: Listo");
             return new ResponseEntity<>(creado, HttpStatus.CREATED);
         } catch (IllegalStateException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
