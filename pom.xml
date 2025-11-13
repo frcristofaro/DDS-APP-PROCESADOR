@@ -14,7 +14,7 @@
   </parent>
 
   <groupId>ar.edu.utn.dds.k3003</groupId>
-  <artifactId>my-app-name</artifactId>
+  <artifactId>APP-PROCESADORPDI</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>2025-tp-template</name>
   <description>Spring Boot Web Application for DDS 2025</description>
@@ -47,6 +47,10 @@
       <artifactId>spring-boot-devtools</artifactId>
       <scope>runtime</scope>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-amqp</artifactId>
     </dependency>
 
     <!-- Database -->

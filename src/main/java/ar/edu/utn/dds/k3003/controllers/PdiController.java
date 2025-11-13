@@ -37,9 +37,9 @@ public class PdiController {
     @PostMapping
     public ResponseEntity<PdIDTO> crearPdi(@RequestBody PdIDTO dto) {
         try {
-            //System.out.println("CONTROLLER: Creando PDI");
+            System.out.println("CONTROLLER: Creando PDI");
             PdIDTO creado = fachada.procesar(dto);
-            //System.out.println("CONTROLLER: Listo");
+            System.out.println("CONTROLLER: Listo");
             return new ResponseEntity<>(creado, HttpStatus.CREATED);
         } catch (IllegalStateException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

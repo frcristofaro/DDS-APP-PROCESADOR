@@ -1,8 +1,10 @@
 package ar.edu.utn.dds.k3003.service;
 
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
+import ar.edu.utn.dds.k3003.config.RabbitConfig;
 import ar.edu.utn.dds.k3003.model.Pdi;
 import ar.edu.utn.dds.k3003.repository.PdIRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +15,20 @@ import java.util.*;
 public class PdIService {
 
     private final PdIRepository repo;
-    private final OCRProcesador ocrService;
-    private final EtiquetadorImagenes etiquetadorService;
+    private final RabbitTemplate rabbitTemplate;
+    //private final OCRProcesador ocrService;
+    //private final EtiquetadorImagenes etiquetadorService;
 
     @Autowired
     private BusquedaService busquedaService;
 
     @Autowired
-    public PdIService(PdIRepository repo, OCRService ocrService, EtiquetadorService etiquetadorService) {
+    //public PdIService(PdIRepository repo, OCRService ocrService, EtiquetadorService etiquetadorService, RabbitTemplate rabbitTemplate) {
+    public PdIService(PdIRepository repo, RabbitTemplate rabbitTemplate) {
         this.repo = repo;
-        this.ocrService = ocrService;
-        this.etiquetadorService = etiquetadorService;
+        this.rabbitTemplate = rabbitTemplate;
+        //this.ocrService = ocrService;
+        //this.etiquetadorService = etiquetadorService;
     }
 
     public List<Pdi> listarPorHecho(String hechoId) {
@@ -40,10 +45,11 @@ public class PdIService {
 
     public Pdi procesarPdI(PdIDTO pdi) {
 
-        //System.out.println("Iniciando procesarPdI");
-        //System.out.println("DTO recibido: " + pdi);
+        System.out.println("Iniciando procesarPdI");
+        System.out.println("DTO recibido: " + pdi);
 
         // Si ya existe, traigo el que tengo en la base
+        /*
         Optional<Pdi> existente = pdi.id() != null
                 ? repo.findById(Long.parseLong(pdi.id()))
                 : Optional.empty();
@@ -83,6 +89,7 @@ public class PdIService {
                 System.err.println("Error al etiquetar imagen: " + e.getMessage());
             }
         }
+        */
 
         // Crear nueva PdI
         Pdi nuevaPdI = new Pdi(
@@ -92,15 +99,18 @@ public class PdIService {
                 pdi.momento(),
                 pdi.contenido(),
                 pdi.urlImagen(),
-                ocrResultado,
-                etiquetas
+                null,
+                new ArrayList<>()
         );
 
         System.out.println("Nueva PdI antes de persistir: " + nuevaPdI);
 
         Pdi guardado = repo.save(nuevaPdI);
 
-        busquedaService.indexar(guardado);
+        //busquedaService.indexar(guardado);
+
+        rabbitTemplate.convertAndSend(RabbitConfig.COLA_PDI, guardado.getId().toString());
+        System.out.println("Se envió PDI a cola: " + guardado.getId());
 
         return guardado;
 
