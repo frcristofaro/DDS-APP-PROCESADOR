@@ -28,15 +28,19 @@ public class FachadaProcesadorPdI {
 
 
     public PdIDTO procesar(PdIDTO pdi) {
+
         System.out.println("FACHADA: Voy a procesar pdi");
-        if (estaActivoHecho(pdi.hechoId())) {
-            throw new IllegalStateException(
-                    "El hecho con ID " + pdi.hechoId() + " está inactivo o no tiene solicitudes activas"
-            );
-        }
+
+//        if (estaActivoHecho(pdi.hechoId())) {
+//            throw new IllegalStateException(
+//                    "El hecho con ID " + pdi.hechoId() + " está inactivo o no tiene solicitudes activas"
+//            );
+//        }
+
         System.out.println("FACHADA: Pdi no está Activo -> Lo Proceso");
         Pdi procesado = pdiService.procesarPdI(pdi);
         System.out.println(procesado.getId().toString());
+
         return toDTO(procesado);
     }
 
@@ -79,23 +83,23 @@ public class FachadaProcesadorPdI {
     }
 
 
-    public boolean estaActivoHecho(String hechoId) {
-        Optional<SolicitudDTO[]> solicitudesOpt = conexionHTTP.obtenerSolicitudesID(hechoId);
-        System.out.println("FACHADA: Estoy viendo si está ACTIVADA");
-        if (solicitudesOpt.isEmpty() || solicitudesOpt.get().length == 0) {
-            throw new NoSuchElementException("No hay solicitudes con Hecho ID: " + hechoId);
-        }
-
-        SolicitudDTO[] solicitudes = solicitudesOpt.get();
-
-        for (SolicitudDTO solicitud : solicitudes) {
-            if ("ACEPTADA".equalsIgnoreCase(solicitud.estado())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
+//    public boolean estaActivoHecho(String hechoId) {
+//        Optional<SolicitudDTO[]> solicitudesOpt = conexionHTTP.obtenerSolicitudesID(hechoId);
+//        System.out.println("FACHADA: Estoy viendo si está ACTIVADA");
+//        if (solicitudesOpt.isEmpty() || solicitudesOpt.get().length == 0) {
+//            throw new NoSuchElementException("No hay solicitudes con Hecho ID: " + hechoId);
+//        }
+//
+//        SolicitudDTO[] solicitudes = solicitudesOpt.get();
+//
+//        for (SolicitudDTO solicitud : solicitudes) {
+//            if ("ACEPTADA".equalsIgnoreCase(solicitud.estado())) {
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//    }
 
 
 }

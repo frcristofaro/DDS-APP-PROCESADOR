@@ -2,6 +2,7 @@ package ar.edu.utn.dds.k3003.controllers;
 
 import ar.edu.utn.dds.k3003.app.ConexionHTTP;
 import ar.edu.utn.dds.k3003.app.FachadaProcesadorPdI;
+import ar.edu.utn.dds.k3003.app.dtos.BusquedaResponse;
 import ar.edu.utn.dds.k3003.app.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
 import ar.edu.utn.dds.k3003.model.PdiBusquedaDocument;
@@ -104,15 +105,25 @@ public class PdiController {
         return ResponseEntity.ok(resultado);
     }
 
+//    @GetMapping("/buscar")
+//    public ResponseEntity<List<PdiBusquedaDocument>> buscarPdis(
+//            @RequestParam String texto,
+//            @RequestParam(required = false) String tag,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "5") int size) {
+//
+//        List<PdiBusquedaDocument> resultados = busquedaService.buscar(texto, tag, page, size);
+//        return ResponseEntity.ok(resultados);
+//    }
+
     @GetMapping("/buscar")
-    public ResponseEntity<List<PdiBusquedaDocument>> buscarPdis(
+    public BusquedaResponse buscarPdis(
             @RequestParam String texto,
             @RequestParam(required = false) String tag,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-
-        List<PdiBusquedaDocument> resultados = busquedaService.buscar(texto, tag, page, size);
-        return ResponseEntity.ok(resultados);
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        return busquedaService.buscar(texto, tag, page, size);
     }
 
 }
