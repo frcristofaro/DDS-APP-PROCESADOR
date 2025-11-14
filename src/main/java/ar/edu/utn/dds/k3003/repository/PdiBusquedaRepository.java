@@ -1,5 +1,6 @@
-package ar.edu.utn.dds.k3003.nosql;
+package ar.edu.utn.dds.k3003.repository;
 
+import ar.edu.utn.dds.k3003.model.PdiBusquedaDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -14,7 +15,7 @@ public interface PdiBusquedaRepository  extends MongoRepository<PdiBusquedaDocum
                 "  { 'contenido': { $regex: ?0, $options: 'i' } }, " +
                 "  { 'ocrResultado': { $regex: ?0, $options: 'i' } } " +
                 "] }, " +
-                "{ 'etiquetas': { $regex: ?1, $options: 'i' } } " +
+                "{ 'etiquetas': ?1 } " +
                 "] }")
         List<PdiBusquedaDocument> buscarPorTextoYTag(String texto, String tag);
 

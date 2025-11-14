@@ -24,7 +24,6 @@ public class MongoConfig {
     @Bean
     public MongoClient mongoClient() {
         try {
-            // Forzamos protocolo TLS 1.2 (por compatibilidad)
             System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
 
             ServerApi serverApi = ServerApi.builder()
@@ -41,7 +40,7 @@ public class MongoConfig {
 
             MongoClient client = MongoClients.create(settings);
 
-            // Prueba de conexión simple (no obligatoria, pero útil para logs iniciales)
+            // Testeo de conexion
             client.listDatabaseNames().first();
 
             logger.info("✅ Conexión a MongoDB Atlas establecida correctamente.");
@@ -55,7 +54,6 @@ public class MongoConfig {
             logger.error("❌ Error inesperado al inicializar conexión MongoDB: {}", e.getMessage());
         }
 
-        // Devuelve un cliente “vacío” para no romper el contexto Spring
         return MongoClients.create();
     }
 

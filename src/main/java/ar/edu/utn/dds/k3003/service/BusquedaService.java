@@ -1,8 +1,8 @@
 package ar.edu.utn.dds.k3003.service;
 
 import ar.edu.utn.dds.k3003.model.Pdi;
-import ar.edu.utn.dds.k3003.nosql.PdiBusquedaDocument;
-import ar.edu.utn.dds.k3003.nosql.PdiBusquedaRepository;
+import ar.edu.utn.dds.k3003.model.PdiBusquedaDocument;
+import ar.edu.utn.dds.k3003.repository.PdiBusquedaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,8 +44,11 @@ public class BusquedaService {
 
         if (tag != null && !tag.isBlank()) {
             res = pdiBusquedaRepository.buscarPorTextoYTag(texto, tag);
+
+            System.out.println("Estoy buscando por texto: " + texto + " y tag: " + tag);
         } else {
             res = pdiBusquedaRepository.buscarPorTexto(texto);
+            System.out.println("Estoy buscando por texto: " + texto);
         }
 
         return eliminarDuplicadosPorHecho(res);

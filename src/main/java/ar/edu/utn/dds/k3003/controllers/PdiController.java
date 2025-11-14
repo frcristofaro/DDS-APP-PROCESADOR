@@ -4,7 +4,7 @@ import ar.edu.utn.dds.k3003.app.ConexionHTTP;
 import ar.edu.utn.dds.k3003.app.FachadaProcesadorPdI;
 import ar.edu.utn.dds.k3003.app.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
-import ar.edu.utn.dds.k3003.nosql.PdiBusquedaDocument;
+import ar.edu.utn.dds.k3003.model.PdiBusquedaDocument;
 import ar.edu.utn.dds.k3003.service.BusquedaService;
 import ar.edu.utn.dds.k3003.service.OCRService;
 import org.springframework.beans.factory.annotation.Autowired;
