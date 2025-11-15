@@ -105,17 +105,6 @@ public class PdiController {
         return ResponseEntity.ok(resultado);
     }
 
-//    @GetMapping("/buscar")
-//    public ResponseEntity<List<PdiBusquedaDocument>> buscarPdis(
-//            @RequestParam String texto,
-//            @RequestParam(required = false) String tag,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "5") int size) {
-//
-//        List<PdiBusquedaDocument> resultados = busquedaService.buscar(texto, tag, page, size);
-//        return ResponseEntity.ok(resultados);
-//    }
-
     @GetMapping("/buscar")
     public BusquedaResponse buscarPdis(
             @RequestParam String texto,

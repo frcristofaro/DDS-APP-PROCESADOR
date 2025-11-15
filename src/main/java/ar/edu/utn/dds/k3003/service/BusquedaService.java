@@ -52,25 +52,44 @@ import java.util.stream.Collectors;
         Page<PdiBusquedaDocument> resPage;
 
         if (tag != null && !tag.isBlank()) {
-            // Tag exacto
+            // Tag exacto (pero solo para acelerar la búsqueda — NO para el filtrado final)
             resPage = pdiBusquedaRepository.buscarPorTextoYTag(texto, tag, pageable);
-            System.out.println("Buscando por texto: " + texto + " y tag EXACTO: " + tag);
+            System.out.println("Buscando por texto: " + texto + " y tag EXACTO (pre-filtro): " + tag);
         } else {
             resPage = pdiBusquedaRepository.buscarPorTexto(texto, pageable);
             System.out.println("Buscando por texto: " + texto);
         }
 
-        // Eliminamos duplicados por hecho_id
-        List<PdiBusquedaDocument> unicos = eliminarDuplicadosPorHecho(resPage.getContent());
+        // 1) Eliminar duplicados por hecho_id (ANTES de filtrar y paginar)
+        List<PdiBusquedaDocument> sinDuplicados = eliminarDuplicadosPorHecho(resPage.getContent());
 
+        // 2) Aplicar filtro EXTRA por tag (aunque ya lo haga el repo)
+        List<PdiBusquedaDocument> filtrados = sinDuplicados.stream()
+                .filter(p -> tag == null || tag.isBlank() || p.getEtiquetas().contains(tag))
+                .toList();
+
+        // 3) Recalcular totales después del filtro
+        int totalFiltrados = filtrados.size();
+
+        // 4) Paginar manualmente
+        int from = page * size;
+        int to = Math.min(from + size, totalFiltrados);
+
+        List<PdiBusquedaDocument> pagina =
+                from >= totalFiltrados ? List.of() : filtrados.subList(from, to);
+
+        int totalPages = (int) Math.ceil((double) totalFiltrados / size);
+
+        // 5) Construir Response REAL
         return new BusquedaResponse(
-                unicos,
+                pagina,
                 page,
                 size,
-                resPage.getTotalElements(),
-                resPage.getTotalPages()
+                totalFiltrados,
+                totalPages
         );
     }
+
 
     private List<PdiBusquedaDocument> eliminarDuplicadosPorHecho(List<PdiBusquedaDocument> docs) {
         return docs.stream()
