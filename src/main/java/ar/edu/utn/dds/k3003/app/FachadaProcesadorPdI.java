@@ -1,7 +1,6 @@
 package ar.edu.utn.dds.k3003.app;
 
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
-import ar.edu.utn.dds.k3003.app.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.model.Pdi;
 import ar.edu.utn.dds.k3003.service.PdIService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ public class FachadaProcesadorPdI {
 
     public FachadaProcesadorPdI(PdIService pdiService, ConexionHTTP conexionHTTP){ //SolicitudesService solicitudesService, ConexionHTTP conexionHTTP){
         this.pdiService = pdiService;
-        //this.solicitudesService = solicitudesService;
         this.conexionHTTP = conexionHTTP;
     }
 

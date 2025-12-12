@@ -32,6 +32,10 @@
     <!-- Spring Boot Starters -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <dependency>
@@ -51,6 +55,12 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-amqp</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.datadoghq</groupId>
+      <artifactId>datadog-api-client</artifactId>
+      <version>2.10.0</version>
     </dependency>
 
     <!-- Database -->

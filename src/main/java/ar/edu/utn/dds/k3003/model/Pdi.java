@@ -1,6 +1,8 @@
 package ar.edu.utn.dds.k3003.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,23 +12,40 @@ import java.util.List;
 @Table(name = "pdis")
 public class Pdi {
 
+    @Setter
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Getter
     @Column(nullable = false)
     private String hechoId;
 
+    @Getter
     @Column(nullable = false)
     private String contenido;
 
+    @Setter
+    @Getter
     private String descripcion;
+
+    @Setter
+    @Getter
     private String lugar;
+
+    @Setter
+    @Getter
     private String momento;
 
+    @Getter
     private String urlImagen;
+    @Setter
+    @Getter
     private String ocrResultado;
 
+    @Setter
+    @Getter
     @ElementCollection
     @CollectionTable(name = "pdi_etiquetas", joinColumns = @JoinColumn(name = "pdi_id"))
     private List<String> etiquetas = new ArrayList<>();
@@ -40,7 +59,6 @@ public class Pdi {
         if(hechoId == null || contenido == null || momento == null) {
             throw new IllegalArgumentException("Hay campos críticos vacíos!");
         }
-
         this.hechoId = hechoId;
         this.descripcion = descripcion;
         this.lugar = lugar;
@@ -52,47 +70,9 @@ public class Pdi {
         this.process_dt = LocalDateTime.now();
     }
 
-    public Long getId() { return id; }
-
-    public String getHechoId() {
-        return hechoId;
-    }
-
-    public String getContenido() {
-        return contenido;
-    }
-
-    public List<String> getEtiquetas() {
-        return etiquetas;
-    }
-
-    public void setEtiquetas(List<String> etiquetas) {
-        this.etiquetas = etiquetas;
-    }
-
-    public String getDescripcion() { return descripcion; }
-
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-
-    public String getLugar() { return lugar; }
-
-    public void setLugar(String lugar) { this.lugar = lugar; }
-
-    public String getMomento() { return momento; }
-
-    public void setMomento(String momento) { this.momento = momento; }
-
     public LocalDateTime getProcessDt() { return process_dt; }
 
     public void setProcessDt(LocalDateTime process_dt) { this.process_dt = process_dt; }
-
-    public void setId(Long id) { this.id = id; }
-
-    public String getOcrResultado() { return ocrResultado; }
-
-    public void setOcrResultado(String ocrResultado) { this.ocrResultado = ocrResultado; }
-
-    public String getUrlImagen() { return urlImagen; }
 
     public void setUrlImagen(String urlImagen) { this.urlImagen = urlImagen; }
 

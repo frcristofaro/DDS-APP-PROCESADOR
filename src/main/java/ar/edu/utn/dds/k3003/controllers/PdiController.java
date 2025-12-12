@@ -5,7 +5,6 @@ import ar.edu.utn.dds.k3003.app.FachadaProcesadorPdI;
 import ar.edu.utn.dds.k3003.app.dtos.BusquedaResponse;
 import ar.edu.utn.dds.k3003.app.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
-import ar.edu.utn.dds.k3003.model.PdiBusquedaDocument;
 import ar.edu.utn.dds.k3003.service.BusquedaService;
 import ar.edu.utn.dds.k3003.service.OCRService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +66,7 @@ public class PdiController {
         return new ResponseEntity<>(lista, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/eliminarHecho/{id}")
     public ResponseEntity<Void> eliminarHecho(@PathVariable String id) {
         fachada.eliminarPdIPorId(id);
         return ResponseEntity.noContent().build();
