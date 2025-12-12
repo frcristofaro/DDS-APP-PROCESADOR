@@ -66,8 +66,8 @@ public class PdiController {
         return new ResponseEntity<>(lista, HttpStatus.OK);
     }
 
-    @DeleteMapping("/eliminarHecho/{id}")
-    public ResponseEntity<Void> eliminarHecho(@PathVariable String id) {
+    @DeleteMapping("/eliminarPdi/{id}")
+    public ResponseEntity<Void> eliminarPdi(@PathVariable String id) {
         fachada.eliminarPdIPorId(id);
         return ResponseEntity.noContent().build();
     }

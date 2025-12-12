@@ -22,8 +22,13 @@ public class DatadogService {
         try{
             ApiClient client = new ApiClient();
 
-            client.addDefaultHeader("DD-API-KEY", System.getenv("DD_API_KEY"));
-            client.addDefaultHeader("DD-API-KEY", System.getenv("DD_APP_KEY"));
+            // Configurar claves directamente en el cliente
+            //client.addDefaultHeader("DD-API-KEY", System.getenv("DD_API_KEY"));
+            client.addDefaultHeader("DD-API-KEY", "73cf4da820b55ccce933d7a63f336efb");
+            //client.addDefaultHeader("DD-API-KEY", System.getenv("DD_APP_KEY"));
+            client.addDefaultHeader("DD-APPLICATION-KEY", "48d055c33027ba49d9f065626e47b4fb7951ba04");
+
+            // Endpoint correcto
             client.setBasePath("https://app.datadoghq.com");
 
             this.metricsApi = new MetricsApi(client);
