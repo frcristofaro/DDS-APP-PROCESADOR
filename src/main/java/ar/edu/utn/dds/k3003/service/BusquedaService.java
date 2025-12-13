@@ -77,16 +77,16 @@ import java.util.stream.Collectors;
 
 
         // Eliminar duplicados por hecho_id
-        List<PdiBusquedaDocument> pdisSinDuplicados =
-                eliminarDuplicadosPorHecho(pdis);
+//        List<PdiBusquedaDocument> pdisSinDuplicados =
+//                eliminarDuplicadosPorHecho(pdis);
+//
+//
+//        List<PdiBusquedaDocument> pdisFinales = pdisSinDuplicados.stream()
+//                .filter(p -> tag == null || tag.isBlank() || p.getEtiquetas().contains(tag))
+//                .toList();
 
-        // Filtro extra por tag (defensivo)
-        List<PdiBusquedaDocument> pdisFinales = pdisSinDuplicados.stream()
-                .filter(p -> tag == null || tag.isBlank() || p.getEtiquetas().contains(tag))
-                .toList();
 
-
-        int totalPdis = pdisFinales.size();
+        int totalPdis = pdis.size();
         int totalHechos = hechos.size();
         int totalItems = totalPdis + totalHechos;
 
@@ -102,7 +102,7 @@ import java.util.stream.Collectors;
         if (from < totalPdis) {
             // La página empieza en PDIs
             int toPdi = Math.min(to, totalPdis);
-            paginaPdis = pdisFinales.subList(from, toPdi);
+            paginaPdis = pdis.subList(from, toPdi);
 
             int restantes = size - paginaPdis.size();
             if (restantes > 0 && totalHechos > 0) {
@@ -135,16 +135,16 @@ import java.util.stream.Collectors;
 
 
 
-    private List<PdiBusquedaDocument> eliminarDuplicadosPorHecho(List<PdiBusquedaDocument> docs) {
-        return docs.stream()
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toMap(
-                                PdiBusquedaDocument::getHechoId, // clave
-                                d -> d, // valor
-                                (d1, d2) -> d1 // si repite hechoId, uso el primero
-                        ),
-                        m -> new ArrayList<>(m.values())
-                ));
-    }
+//    private List<PdiBusquedaDocument> eliminarDuplicadosPorHecho(List<PdiBusquedaDocument> docs) {
+//        return docs.stream()
+//                .collect(Collectors.collectingAndThen(
+//                        Collectors.toMap(
+//                                PdiBusquedaDocument::getHechoId, // clave
+//                                d -> d, // valor
+//                                (d1, d2) -> d1 // si repite hechoId, uso el primero
+//                        ),
+//                        m -> new ArrayList<>(m.values())
+//                ));
+//    }
 
 }
