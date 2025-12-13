@@ -64,7 +64,7 @@ import java.util.stream.Collectors;
         List<PdiBusquedaDocument> pdis;
         List<HechoBusquedaDocument> hechos;
 
-        if (tag != null && !tag.isBlank()) {
+        if (tag != null || !tag.isBlank()) {
             // Tag se usa solo para PDIs
             pdis = pdiBusquedaRepository.buscarPDIPorTextoYTag(texto, tag);
             hechos = List.of(); // no se buscan hechos con tag
