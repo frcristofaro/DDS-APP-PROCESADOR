@@ -8,6 +8,7 @@ import ar.edu.utn.dds.k3003.model.PdiBusquedaDocument;
 import ar.edu.utn.dds.k3003.repository.HechoBusquedaRepository;
 import ar.edu.utn.dds.k3003.repository.PdiBusquedaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,12 +23,14 @@ import java.util.stream.Collectors;
 
         private final HechoBusquedaRepository hechoBusquedaRepository;
         private final PdiBusquedaRepository pdiBusquedaRepository;
+    private final PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer;
 
-        @Autowired
-        public BusquedaService(PdiBusquedaRepository pdiBusquedaRepository, HechoBusquedaRepository hechoBusquedaRepository) {
+    @Autowired
+        public BusquedaService(PdiBusquedaRepository pdiBusquedaRepository, HechoBusquedaRepository hechoBusquedaRepository, PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer) {
             this.pdiBusquedaRepository = pdiBusquedaRepository;
             this.hechoBusquedaRepository = hechoBusquedaRepository;
-        }
+        this.propertySourcesPlaceholderConfigurer = propertySourcesPlaceholderConfigurer;
+    }
 
         public void indexar(Pdi pdi) {
             PdiBusquedaDocument doc = new PdiBusquedaDocument(
@@ -60,19 +63,23 @@ import java.util.stream.Collectors;
             );
         }
 
+        System.out.println("texto: " + texto);
 
         List<PdiBusquedaDocument> pdis;
         List<HechoBusquedaDocument> hechos;
+        System.out.println("tag|: " + tag);
 
-        if (tag != null || !tag.isBlank()) {
+        if (tag == null ) {
+            System.out.println("Buscando PDIs y Hechos por texto: " + texto);
+            pdis = pdiBusquedaRepository.buscarPDIPorTexto(texto);
+            hechos = hechoBusquedaRepository.buscarHechoPorTexto(texto);
+            System.out.println("Buscando PDIs y Hechos por texto: " + texto);
+        } else {
+            System.out.println("Buscando PDIs por texto y tag: " + texto + " / " + tag);
             // Tag se usa solo para PDIs
             pdis = pdiBusquedaRepository.buscarPDIPorTextoYTag(texto, tag);
             hechos = List.of(); // no se buscan hechos con tag
             System.out.println("Buscando PDIs por texto y tag: " + texto + " / " + tag);
-        } else {
-            pdis = pdiBusquedaRepository.buscarPDIPorTexto(texto);
-            hechos = hechoBusquedaRepository.buscarHechoPorTexto(texto);
-            System.out.println("Buscando PDIs y Hechos por texto: " + texto);
         }
 
 
