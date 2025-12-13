@@ -5,14 +5,14 @@ import ar.edu.utn.dds.k3003.model.PdiBusquedaDocument;
 import java.util.List;
 
 public class BusquedaResponse {
-    private List<PdiBusquedaDocument> resultados;
+    private List<BusquedaItemDTO> resultados;
     private int page;
     private int size;
     private long totalElements;
     private int totalPages;
 
     // constructor
-    public BusquedaResponse(List<PdiBusquedaDocument> resultados, int page, int size, long totalElements, int totalPages) {
+    public BusquedaResponse(List<BusquedaItemDTO> resultados, int page, int size, long totalElements, int totalPages) {
         this.resultados = resultados;
         this.page = page;
         this.size = size;
@@ -20,11 +20,11 @@ public class BusquedaResponse {
         this.totalPages = totalPages;
     }
 
-    public List<PdiBusquedaDocument> getResultados() {
+    public List<BusquedaItemDTO> getResultados() {
         return resultados;
     }
 
-    public void setResultados(List<PdiBusquedaDocument> resultados) {
+    public void setResultados(List<BusquedaItemDTO> resultados) {
         this.resultados = resultados;
     }
 

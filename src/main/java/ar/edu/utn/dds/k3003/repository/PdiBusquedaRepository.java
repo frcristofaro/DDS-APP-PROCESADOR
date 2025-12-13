@@ -6,8 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
-import java.util.List;
-
 public interface PdiBusquedaRepository  extends MongoRepository<PdiBusquedaDocument, String> {
 
         // Búsqueda por texto y etiqueta
@@ -19,7 +17,7 @@ public interface PdiBusquedaRepository  extends MongoRepository<PdiBusquedaDocum
                 "] }, " +
                 "{ 'etiquetas': ?1 } " +
                 "] }")
-        Page<PdiBusquedaDocument> buscarPorTextoYTag(String texto, String tag, Pageable pageable);
+        Page<PdiBusquedaDocument> buscarPDIPorTextoYTag(String texto, String tag, Pageable pageable);
 
         // Si no hay tag, buscamos solo por texto
         @Query("{ $or: [ " +
@@ -27,5 +25,5 @@ public interface PdiBusquedaRepository  extends MongoRepository<PdiBusquedaDocum
                 "{ 'contenido': { $regex: ?0, $options: 'i' } }, " +
                 "{ 'ocrResultado': { $regex: ?0, $options: 'i' } } " +
                 "] }")
-        Page<PdiBusquedaDocument> buscarPorTexto(String texto, Pageable pageable);
+        Page<PdiBusquedaDocument> buscarPDIPorTexto(String texto, Pageable pageable);
     }

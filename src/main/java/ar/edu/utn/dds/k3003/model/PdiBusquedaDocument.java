@@ -28,10 +28,12 @@ public class PdiBusquedaDocument {
         private List<String> etiquetas;
         private LocalDateTime fechaIndexado;
 
+        private String hechoTitulo;
+
         //public PdiBusquedaDocument() {}
 
         public PdiBusquedaDocument(String id, String hechoId, String descripcion, String lugar, String momento,
-                                   String contenido, String urlImagen, String ocrResultado, List<String> etiquetas) {
+                                   String contenido, String urlImagen, String ocrResultado, List<String> etiquetas, String hechoTitulo) {
             this.id = id;
             this.hechoId = hechoId;
             this.descripcion = descripcion;
@@ -42,6 +44,7 @@ public class PdiBusquedaDocument {
             this.ocrResultado = ocrResultado;
             this.etiquetas = etiquetas;
             this.fechaIndexado = LocalDateTime.now();
+            this.hechoTitulo = hechoTitulo;
         }
 
     public String getId() {

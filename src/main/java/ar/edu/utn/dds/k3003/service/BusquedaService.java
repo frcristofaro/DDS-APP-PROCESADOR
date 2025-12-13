@@ -1,8 +1,11 @@
 package ar.edu.utn.dds.k3003.service;
 
+import ar.edu.utn.dds.k3003.app.dtos.BusquedaItemDTO;
 import ar.edu.utn.dds.k3003.app.dtos.BusquedaResponse;
+import ar.edu.utn.dds.k3003.model.HechoBusquedaDocument;
 import ar.edu.utn.dds.k3003.model.Pdi;
 import ar.edu.utn.dds.k3003.model.PdiBusquedaDocument;
+import ar.edu.utn.dds.k3003.repository.HechoBusquedaRepository;
 import ar.edu.utn.dds.k3003.repository.PdiBusquedaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,11 +20,13 @@ import java.util.stream.Collectors;
 @Service
     public class BusquedaService {
 
+        private final HechoBusquedaRepository hechoBusquedaRepository;
         private final PdiBusquedaRepository pdiBusquedaRepository;
 
         @Autowired
-        public BusquedaService(PdiBusquedaRepository pdiBusquedaRepository) {
+        public BusquedaService(PdiBusquedaRepository pdiBusquedaRepository, HechoBusquedaRepository hechoBusquedaRepository) {
             this.pdiBusquedaRepository = pdiBusquedaRepository;
+            this.hechoBusquedaRepository = hechoBusquedaRepository;
         }
 
         public void indexar(Pdi pdi) {
@@ -34,7 +39,8 @@ import java.util.stream.Collectors;
                     pdi.getContenido(),
                     pdi.getUrlImagen(),
                     pdi.getOcrResultado(),
-                    pdi.getEtiquetas()
+                    pdi.getEtiquetas(),
+                    null
             );
             pdiBusquedaRepository.save(doc);
             System.out.println("PDI indexado en Mongo: " + pdi.getId());
@@ -49,43 +55,63 @@ import java.util.stream.Collectors;
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<PdiBusquedaDocument> resPage;
+        Page<PdiBusquedaDocument> resPDI;
+        Page<HechoBusquedaDocument> resHechos;
 
         if (tag != null && !tag.isBlank()) {
             // Tag exacto (pero solo para acelerar la búsqueda — NO para el filtrado final)
-            resPage = pdiBusquedaRepository.buscarPorTextoYTag(texto, tag, pageable);
+            resPDI = pdiBusquedaRepository.buscarPDIPorTextoYTag(texto, tag, pageable);
+            resHechos = hechoBusquedaRepository.buscarHechoPorTexto(texto, pageable);
             System.out.println("Buscando por texto: " + texto + " y tag EXACTO (pre-filtro): " + tag);
         } else {
-            resPage = pdiBusquedaRepository.buscarPorTexto(texto, pageable);
+            resPDI = pdiBusquedaRepository.buscarPDIPorTexto(texto, pageable);
+            resHechos = hechoBusquedaRepository.buscarHechoPorTexto(texto, pageable);
             System.out.println("Buscando por texto: " + texto);
         }
 
+        List<HechoBusquedaDocument> res_hechos = resHechos.getContent();
+
         // 1) Eliminar duplicados por hecho_id (ANTES de filtrar y paginar)
-        List<PdiBusquedaDocument> sinDuplicados = eliminarDuplicadosPorHecho(resPage.getContent());
+        List<PdiBusquedaDocument> sinDuplicados = eliminarDuplicadosPorHecho(resPDI.getContent());
 
         // 2) Aplicar filtro EXTRA por tag (aunque ya lo haga el repo)
-        List<PdiBusquedaDocument> filtrados = sinDuplicados.stream()
+        List<PdiBusquedaDocument> res_pdis = sinDuplicados.stream()
                 .filter(p -> tag == null || tag.isBlank() || p.getEtiquetas().contains(tag))
                 .toList();
 
-        // 3) Recalcular totales después del filtro
-        int totalFiltrados = filtrados.size();
+        List<BusquedaItemDTO> items = new ArrayList<>();
 
-        // 4) Paginar manualmente
+        // PDIs
+        for (PdiBusquedaDocument pdi : res_pdis) {
+            items.add(new BusquedaItemDTO(
+                    BusquedaItemDTO.Tipo.PDI,
+                    pdi
+            ));
+        }
+
+        // Hechos
+        for (HechoBusquedaDocument hecho : res_hechos) {
+            items.add(new BusquedaItemDTO(
+                    BusquedaItemDTO.Tipo.HECHO,
+                    hecho
+            ));
+        }
+
+        int total = items.size();
+
         int from = page * size;
-        int to = Math.min(from + size, totalFiltrados);
+        int to = Math.min(from + size, total);
 
-        List<PdiBusquedaDocument> pagina =
-                from >= totalFiltrados ? List.of() : filtrados.subList(from, to);
+        List<BusquedaItemDTO> pagina =
+                from >= total ? List.of() : items.subList(from, to);
 
-        int totalPages = (int) Math.ceil((double) totalFiltrados / size);
+        int totalPages = (int) Math.ceil((double) total / size);
 
-        // 5) Construir Response REAL
         return new BusquedaResponse(
                 pagina,
                 page,
                 size,
-                totalFiltrados,
+                total,
                 totalPages
         );
     }
