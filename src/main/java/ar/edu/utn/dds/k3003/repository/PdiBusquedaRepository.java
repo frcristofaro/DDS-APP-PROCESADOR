@@ -13,7 +13,8 @@ public interface PdiBusquedaRepository  extends MongoRepository<PdiBusquedaDocum
                 "{ $or: [ " +
                 "  { 'descripcion': { $regex: ?0, $options: 'i' } }, " +
                 "  { 'contenido': { $regex: ?0, $options: 'i' } }, " +
-                "  { 'ocrResultado': { $regex: ?0, $options: 'i' } } " +
+                "  { 'momento': { $regex: ?0, $options: 'i' } }, " +
+                "  { 'lugar': { $regex: ?0, $options: 'i' } } " +
                 "] }, " +
                 "{ 'etiquetas': ?1 } " +
                 "] }")
@@ -23,7 +24,8 @@ public interface PdiBusquedaRepository  extends MongoRepository<PdiBusquedaDocum
         @Query("{ $or: [ " +
                 "{ 'descripcion': { $regex: ?0, $options: 'i' } }, " +
                 "{ 'contenido': { $regex: ?0, $options: 'i' } }, " +
-                "{ 'ocrResultado': { $regex: ?0, $options: 'i' } } " +
+                "  { 'momento': { $regex: ?0, $options: 'i' } }, " +
+                "  { 'lugar': { $regex: ?0, $options: 'i' } } " +
                 "] }")
         List<PdiBusquedaDocument> buscarPDIPorTexto(String texto);
     }

@@ -29,13 +29,6 @@ public class FachadaProcesadorPdI {
 
         System.out.println("FACHADA: Voy a procesar pdi");
 
-//        if (estaActivoHecho(pdi.hechoId())) {
-//            throw new IllegalStateException(
-//                    "El hecho con ID " + pdi.hechoId() + " está inactivo o no tiene solicitudes activas"
-//            );
-//        }
-
-        System.out.println("FACHADA: Pdi no está Activo -> Lo Proceso");
         Pdi procesado = pdiService.procesarPdI(pdi);
         System.out.println(procesado.getId().toString());
 
