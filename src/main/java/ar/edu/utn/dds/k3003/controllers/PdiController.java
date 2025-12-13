@@ -114,4 +114,9 @@ public class PdiController {
         return busquedaService.buscar(texto, tag, page, size);
     }
 
+    @GetMapping("/cron")
+    public ResponseEntity<Void> cron(){
+        return ResponseEntity.noContent().build();
+    }
+
 }
