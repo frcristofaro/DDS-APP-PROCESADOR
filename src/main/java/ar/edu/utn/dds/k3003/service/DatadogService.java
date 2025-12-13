@@ -74,13 +74,13 @@ public class DatadogService {
     public void enviarMetrica(String nombre, double valor) {
         long timestamp = System.currentTimeMillis() / 1000;
 
-        // Crear la serie con points como array (sin Point)
         Series serie = new Series()
                 .metric(nombre)
                 .type("gauge")
                 .points(Collections.singletonList(
                         java.util.Arrays.asList((double) timestamp, valor)
                 ));
+        System.out.println(serie);
 
         MetricsPayload payload = new MetricsPayload()
                 .series(Collections.singletonList(serie));

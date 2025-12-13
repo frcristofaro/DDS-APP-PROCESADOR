@@ -60,9 +60,6 @@ import java.util.stream.Collectors;
             );
         }
 
-        // ===============================
-        // 1️⃣ Buscar SIN paginar en Mongo
-        // ===============================
 
         List<PdiBusquedaDocument> pdis;
         List<HechoBusquedaDocument> hechos;
@@ -78,9 +75,6 @@ import java.util.stream.Collectors;
             System.out.println("Buscando PDIs y Hechos por texto: " + texto);
         }
 
-        // ===============================
-        // 2️⃣ Limpiar y filtrar PDIs
-        // ===============================
 
         // Eliminar duplicados por hecho_id
         List<PdiBusquedaDocument> pdisSinDuplicados =
@@ -91,9 +85,6 @@ import java.util.stream.Collectors;
                 .filter(p -> tag == null || tag.isBlank() || p.getEtiquetas().contains(tag))
                 .toList();
 
-        // ===============================
-        // 3️⃣ Totales GLOBALES
-        // ===============================
 
         int totalPdis = pdisFinales.size();
         int totalHechos = hechos.size();
@@ -101,9 +92,6 @@ import java.util.stream.Collectors;
 
         int totalPages = (int) Math.ceil((double) totalItems / size);
 
-        // ===============================
-        // 4️⃣ Paginado MANUAL
-        // ===============================
 
         int from = page * size;
         int to = Math.min(from + size, totalItems);
@@ -134,9 +122,6 @@ import java.util.stream.Collectors;
             }
         }
 
-        // ===============================
-        // 5️⃣ Response FINAL
-        // ===============================
 
         return new BusquedaResponse(
                 paginaHechos,

@@ -6,6 +6,7 @@ import ar.edu.utn.dds.k3003.app.dtos.BusquedaResponse;
 import ar.edu.utn.dds.k3003.app.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.app.dtos.PdIDTO;
 import ar.edu.utn.dds.k3003.service.BusquedaService;
+import ar.edu.utn.dds.k3003.service.DatadogService;
 import ar.edu.utn.dds.k3003.service.OCRService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,23 +24,37 @@ public class PdiController {
     private final FachadaProcesadorPdI fachada;
     private final ConexionHTTP conexionHTTP;
     private final OCRService ocrService;
+    private final DatadogService datadogService;
 
     @Autowired
     private BusquedaService busquedaService;
 
     @Autowired
-    public PdiController(FachadaProcesadorPdI fachada, ConexionHTTP conexionHTTP, OCRService ocrService) {
+    public PdiController(FachadaProcesadorPdI fachada, ConexionHTTP conexionHTTP, OCRService ocrService, DatadogService datadogService) {
         this.fachada = fachada;
         this.conexionHTTP = conexionHTTP;
         this.ocrService = ocrService;
+        this.datadogService = datadogService;
     }
 
     @PostMapping
     public ResponseEntity<PdIDTO> crearPdi(@RequestBody PdIDTO dto) {
         try {
             System.out.println("CONTROLLER: Creando PDI");
+            long inicio = System.nanoTime();
+
             PdIDTO creado = fachada.procesar(dto);
+
             System.out.println("CONTROLLER: Listo");
+            long fin = System.nanoTime();
+
+            double duracion = (fin - inicio) / 1_000_000.0;
+
+            datadogService.enviarMetrica(
+                    "miapp.db.creacion_pdi.tiempo_ms",
+                    duracion
+            );
+
             return new ResponseEntity<>(creado, HttpStatus.CREATED);
         } catch (IllegalStateException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
