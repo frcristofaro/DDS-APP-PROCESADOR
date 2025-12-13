@@ -50,74 +50,104 @@ import java.util.stream.Collectors;
     public BusquedaResponse buscar(String texto, String tag, int page, int size) {
 
         if (texto == null || texto.isBlank()) {
-            return new BusquedaResponse(List.of(), List.of(), page, size, 0, 0);
+            return new BusquedaResponse(
+                    List.of(),
+                    List.of(),
+                    page,
+                    size,
+                    0,
+                    0
+            );
         }
 
-        Pageable pageable = PageRequest.of(page, size);
+        // ===============================
+        // 1️⃣ Buscar SIN paginar en Mongo
+        // ===============================
 
-        Page<PdiBusquedaDocument> resPDI;
-        Page<HechoBusquedaDocument> resHechos;
+        List<PdiBusquedaDocument> pdis;
+        List<HechoBusquedaDocument> hechos;
 
         if (tag != null && !tag.isBlank()) {
-            // Tag exacto (pero solo para acelerar la búsqueda — NO para el filtrado final)
-            resPDI = pdiBusquedaRepository.buscarPDIPorTextoYTag(texto, tag, pageable);
-            resHechos = hechoBusquedaRepository.buscarHechoPorTexto(texto, pageable);
-            System.out.println("Buscando por texto: " + texto + " y tag EXACTO (pre-filtro): " + tag);
+            // Tag se usa solo para PDIs
+            pdis = pdiBusquedaRepository.buscarPDIPorTextoYTag(texto, tag);
+            hechos = List.of(); // no se buscan hechos con tag
+            System.out.println("Buscando PDIs por texto y tag: " + texto + " / " + tag);
         } else {
-            resPDI = pdiBusquedaRepository.buscarPDIPorTexto(texto, pageable);
-            resHechos = hechoBusquedaRepository.buscarHechoPorTexto(texto, pageable);
-            System.out.println("Buscando por texto: " + texto);
+            pdis = pdiBusquedaRepository.buscarPDIPorTexto(texto);
+            hechos = hechoBusquedaRepository.buscarHechoPorTexto(texto);
+            System.out.println("Buscando PDIs y Hechos por texto: " + texto);
         }
 
-        List<HechoBusquedaDocument> res_hechos = resHechos.getContent();
+        // ===============================
+        // 2️⃣ Limpiar y filtrar PDIs
+        // ===============================
 
-        // 1) Eliminar duplicados por hecho_id (ANTES de filtrar y paginar)
-        List<PdiBusquedaDocument> sinDuplicados = eliminarDuplicadosPorHecho(resPDI.getContent());
+        // Eliminar duplicados por hecho_id
+        List<PdiBusquedaDocument> pdisSinDuplicados =
+                eliminarDuplicadosPorHecho(pdis);
 
-        // 2) Aplicar filtro EXTRA por tag (aunque ya lo haga el repo)
-        List<PdiBusquedaDocument> res_pdis = sinDuplicados.stream()
+        // Filtro extra por tag (defensivo)
+        List<PdiBusquedaDocument> pdisFinales = pdisSinDuplicados.stream()
                 .filter(p -> tag == null || tag.isBlank() || p.getEtiquetas().contains(tag))
                 .toList();
 
-        //List<BusquedaItemDTO> items = new ArrayList<>();
+        // ===============================
+        // 3️⃣ Totales GLOBALES
+        // ===============================
 
-        BusquedaItemDTO item = new BusquedaItemDTO();
+        int totalPdis = pdisFinales.size();
+        int totalHechos = hechos.size();
+        int totalItems = totalPdis + totalHechos;
 
-        // PDIs
-        for (PdiBusquedaDocument pdi : res_pdis) {
-            item.getPdi().add(pdi);
-        }
+        int totalPages = (int) Math.ceil((double) totalItems / size);
 
-        for(HechoBusquedaDocument hecho : res_hechos){
-            item.getHecho().add(hecho);
-        }
-
-        int total = item.getHecho().size() + item.getPdi().size();
+        // ===============================
+        // 4️⃣ Paginado MANUAL
+        // ===============================
 
         int from = page * size;
-        int to = Math.min(from + size, total);
+        int to = Math.min(from + size, totalItems);
 
+        List<PdiBusquedaDocument> paginaPdis = List.of();
+        List<HechoBusquedaDocument> paginaHechos = List.of();
 
+        if (from < totalPdis) {
+            // La página empieza en PDIs
+            int toPdi = Math.min(to, totalPdis);
+            paginaPdis = pdisFinales.subList(from, toPdi);
 
-//        List<HechoBusquedaDocument> paginaHechos =
-//                from >= total ? List.of() : item.getHecho().subList(from, to);
-//
-//        List<PdiBusquedaDocument> paginaPDI =
-//                from >= total ? List.of() : item.getPdi().subList(from, to);
+            int restantes = size - paginaPdis.size();
+            if (restantes > 0 && totalHechos > 0) {
+                int hechosFrom = Math.max(0, from - totalPdis);
+                paginaHechos = hechos.subList(
+                        hechosFrom,
+                        Math.min(hechosFrom + restantes, totalHechos)
+                );
+            }
+        } else {
+            // La página empieza directamente en Hechos
+            int hechosFrom = from - totalPdis;
+            int hechosTo = Math.min(to - totalPdis, totalHechos);
 
+            if (hechosFrom < totalHechos) {
+                paginaHechos = hechos.subList(hechosFrom, hechosTo);
+            }
+        }
 
-        int totalPages = (int) Math.ceil((double) total / size);
+        // ===============================
+        // 5️⃣ Response FINAL
+        // ===============================
 
         return new BusquedaResponse(
-                item.getHecho(),
-                item.getPdi(),
+                paginaHechos,
+                paginaPdis,
                 page,
                 size,
-                total,
+                totalItems,
                 totalPages
         );
-
     }
+
 
 
     private List<PdiBusquedaDocument> eliminarDuplicadosPorHecho(List<PdiBusquedaDocument> docs) {

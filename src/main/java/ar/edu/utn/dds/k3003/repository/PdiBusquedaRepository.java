@@ -1,10 +1,10 @@
 package ar.edu.utn.dds.k3003.repository;
 
 import ar.edu.utn.dds.k3003.model.PdiBusquedaDocument;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+
+import java.util.List;
 
 public interface PdiBusquedaRepository  extends MongoRepository<PdiBusquedaDocument, String> {
 
@@ -17,7 +17,7 @@ public interface PdiBusquedaRepository  extends MongoRepository<PdiBusquedaDocum
                 "] }, " +
                 "{ 'etiquetas': ?1 } " +
                 "] }")
-        Page<PdiBusquedaDocument> buscarPDIPorTextoYTag(String texto, String tag, Pageable pageable);
+        List<PdiBusquedaDocument> buscarPDIPorTextoYTag(String texto, String tag);
 
         // Si no hay tag, buscamos solo por texto
         @Query("{ $or: [ " +
@@ -25,5 +25,5 @@ public interface PdiBusquedaRepository  extends MongoRepository<PdiBusquedaDocum
                 "{ 'contenido': { $regex: ?0, $options: 'i' } }, " +
                 "{ 'ocrResultado': { $regex: ?0, $options: 'i' } } " +
                 "] }")
-        Page<PdiBusquedaDocument> buscarPDIPorTexto(String texto, Pageable pageable);
+        List<PdiBusquedaDocument> buscarPDIPorTexto(String texto);
     }
