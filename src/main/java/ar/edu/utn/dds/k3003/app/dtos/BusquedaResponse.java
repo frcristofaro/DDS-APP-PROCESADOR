@@ -1,31 +1,42 @@
 package ar.edu.utn.dds.k3003.app.dtos;
 
+import ar.edu.utn.dds.k3003.model.HechoBusquedaDocument;
 import ar.edu.utn.dds.k3003.model.PdiBusquedaDocument;
 
 import java.util.List;
 
 public class BusquedaResponse {
-    private List<BusquedaItemDTO> resultados;
+    private List<HechoBusquedaDocument> resHechos;
+    private List<PdiBusquedaDocument> resPDI;
     private int page;
     private int size;
     private long totalElements;
     private int totalPages;
 
     // constructor
-    public BusquedaResponse(List<BusquedaItemDTO> resultados, int page, int size, long totalElements, int totalPages) {
-        this.resultados = resultados;
+    public BusquedaResponse(List<HechoBusquedaDocument> resHechos, List<PdiBusquedaDocument> resPDI, int page, int size, long totalElements, int totalPages) {
+        this.resHechos = resHechos;
+        this.resPDI = resPDI;
         this.page = page;
         this.size = size;
         this.totalElements = totalElements;
         this.totalPages = totalPages;
     }
 
-    public List<BusquedaItemDTO> getResultados() {
-        return resultados;
+    public List<HechoBusquedaDocument> getResHechos() {
+        return resHechos;
     }
 
-    public void setResultados(List<BusquedaItemDTO> resultados) {
-        this.resultados = resultados;
+    public void setResHechos(List<HechoBusquedaDocument> resHechos) {
+        this.resHechos = resHechos;
+    }
+
+    public List<PdiBusquedaDocument> getResPDI() {
+        return resPDI;
+    }
+
+    public void setResPDI(List<PdiBusquedaDocument> resPDI) {
+        this.resPDI = resPDI;
     }
 
     public int getPage() {

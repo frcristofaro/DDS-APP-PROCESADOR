@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
     public BusquedaResponse buscar(String texto, String tag, int page, int size) {
 
         if (texto == null || texto.isBlank()) {
-            return new BusquedaResponse(List.of(), page, size, 0, 0);
+            return new BusquedaResponse(List.of(), List.of(), page, size, 0, 0);
         }
 
         Pageable pageable = PageRequest.of(page, size);
@@ -79,41 +79,44 @@ import java.util.stream.Collectors;
                 .filter(p -> tag == null || tag.isBlank() || p.getEtiquetas().contains(tag))
                 .toList();
 
-        List<BusquedaItemDTO> items = new ArrayList<>();
+        //List<BusquedaItemDTO> items = new ArrayList<>();
+
+        BusquedaItemDTO item = new BusquedaItemDTO();
 
         // PDIs
         for (PdiBusquedaDocument pdi : res_pdis) {
-            items.add(new BusquedaItemDTO(
-                    BusquedaItemDTO.Tipo.PDI,
-                    pdi
-            ));
+            item.getPdi().add(pdi);
         }
 
-        // Hechos
-        for (HechoBusquedaDocument hecho : res_hechos) {
-            items.add(new BusquedaItemDTO(
-                    BusquedaItemDTO.Tipo.HECHO,
-                    hecho
-            ));
+        for(HechoBusquedaDocument hecho : res_hechos){
+            item.getHecho().add(hecho);
         }
 
-        int total = items.size();
+        int total = item.getHecho().size() + item.getPdi().size();
 
         int from = page * size;
         int to = Math.min(from + size, total);
 
-        List<BusquedaItemDTO> pagina =
-                from >= total ? List.of() : items.subList(from, to);
+
+
+//        List<HechoBusquedaDocument> paginaHechos =
+//                from >= total ? List.of() : item.getHecho().subList(from, to);
+//
+//        List<PdiBusquedaDocument> paginaPDI =
+//                from >= total ? List.of() : item.getPdi().subList(from, to);
+
 
         int totalPages = (int) Math.ceil((double) total / size);
 
         return new BusquedaResponse(
-                pagina,
+                item.getHecho(),
+                item.getPdi(),
                 page,
                 size,
                 total,
                 totalPages
         );
+
     }
 
 
